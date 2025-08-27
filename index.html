@@ -262,6 +262,9 @@
 
     <!-- Include jsPDF for client-side PDF generation -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    
+    <!-- Include EmailJS for client-side email sending -->
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 
     <script>
         let examData = {};
@@ -287,7 +290,21 @@
                 window.location.href = 'login.html';
                 return;
             }
+            
+            // Initialize EmailJS
+            initializeEmailJS();
+            
+            // Request notification permission
+            requestNotificationPermission();
+            
+            // Load data and check for weekly report
             loadData();
+            
+            // Check if weekly report should be sent
+            checkWeeklyReport();
+            
+            // Set up daily check for Saturday reports
+            setupDailyCheck();
         });
 
         function checkAuth() {
@@ -498,6 +515,214 @@
                 showError('Failed to generate report: ' + error.message);
             } finally {
                 showLoading(false);
+            }
+        }
+
+        // Initialize EmailJS service
+        function initializeEmailJS() {
+            // Initialize EmailJS with your public key
+            // Note: You'll need to replace this with your actual EmailJS public key
+            emailjs.init("YOUR_EMAILJS_PUBLIC_KEY");
+        }
+
+        // Generate PDF and send via email
+        async function generateAndEmailReport() {
+            try {
+                showLoading(true);
+                
+                // Generate PDF report
+                const pdfBlob = await generatePDFBlob();
+                
+                // Convert PDF to base64 for email attachment
+                const base64PDF = await blobToBase64(pdfBlob);
+                
+                // Send email with PDF attachment
+                await sendEmailReport(base64PDF);
+                
+                // Mark report as sent today
+                localStorage.setItem('examTracker_lastReportDate', new Date().toDateString());
+                
+                showSuccess('Weekly report generated and sent to haskhr@hotmail.com successfully!');
+            } catch (error) {
+                showError('Failed to send weekly report: ' + error.message);
+            } finally {
+                showLoading(false);
+            }
+        }
+
+        // Generate PDF as blob for email attachment
+        async function generatePDFBlob() {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+            
+            // Add title
+            doc.setFontSize(20);
+            doc.text('Weekly Exam Readiness Report', 20, 30);
+            
+            // Add student info
+            doc.setFontSize(12);
+            doc.text('Student: Raghad Hassan Adam', 20, 50);
+            doc.text(`Report Date: ${new Date().toLocaleDateString()}`, 20, 60);
+            doc.text('Generated: Automatically (Weekly Schedule)', 20, 70);
+            
+            // Add overall stats
+            doc.setFontSize(16);
+            doc.text('Overall Performance', 20, 90);
+            doc.setFontSize(12);
+            doc.text(`Overall Readiness: ${(examData.overall_readiness * 100).toFixed(1)}%`, 20, 105);
+            doc.text(`Total Subjects: ${subjects.length}`, 20, 115);
+            
+            // Add subject details
+            let yPosition = 135;
+            doc.setFontSize(16);
+            doc.text('Subject Breakdown', 20, yPosition);
+            yPosition += 15;
+            
+            subjects.forEach(subject => {
+                const data = examData[subject];
+                const readiness = (data.readiness * 100).toFixed(1);
+                
+                // Count completed chapters and exams
+                const chapters = Object.values(data.chapters || {});
+                const exams = Object.values(data.exams || {});
+                const completedChapters = chapters.filter(ch => ch.studied).length;
+                const completedExams = exams.filter(ex => ex.score !== null).length;
+                
+                doc.setFontSize(14);
+                doc.text(`${subject}`, 20, yPosition);
+                doc.setFontSize(10);
+                doc.text(`Readiness: ${readiness}%`, 30, yPosition + 10);
+                doc.text(`Total Points: ${data.full_score}`, 30, yPosition + 20);
+                doc.text(`Chapters Completed: ${completedChapters}/${chapters.length}`, 30, yPosition + 30);
+                doc.text(`Exams Completed: ${completedExams}/${exams.length}`, 30, yPosition + 40);
+                
+                yPosition += 55;
+                
+                // Add new page if needed
+                if (yPosition > 240) {
+                    doc.addPage();
+                    yPosition = 30;
+                }
+            });
+            
+            // Add footer
+            const pageCount = doc.internal.getNumberOfPages();
+            for (let i = 1; i <= pageCount; i++) {
+                doc.setPage(i);
+                doc.setFontSize(8);
+                doc.text(`Generated automatically on ${new Date().toLocaleString()}`, 20, 285);
+                doc.text(`Page ${i} of ${pageCount}`, 180, 285);
+            }
+            
+            return doc.output('blob');
+        }
+
+        // Send email with PDF attachment
+        async function sendEmailReport(base64PDF) {
+            const templateParams = {
+                to_email: 'haskhr@hotmail.com',
+                student_name: 'Raghad Hassan Adam',
+                report_date: new Date().toLocaleDateString(),
+                overall_readiness: (examData.overall_readiness * 100).toFixed(1),
+                subject_count: subjects.length,
+                pdf_attachment: base64PDF,
+                importance: 'high'
+            };
+
+            // Send email using EmailJS
+            // Note: You'll need to replace these with your actual EmailJS service and template IDs
+            await emailjs.send(
+                'YOUR_SERVICE_ID',
+                'YOUR_TEMPLATE_ID',
+                templateParams
+            );
+        }
+
+        // Convert blob to base64
+        function blobToBase64(blob) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = () => resolve(reader.result.split(',')[1]);
+                reader.onerror = reject;
+                reader.readAsDataURL(blob);
+            });
+        }
+
+        // Request notification permission
+        function requestNotificationPermission() {
+            if ('Notification' in window && Notification.permission === 'default') {
+                Notification.requestPermission().then(permission => {
+                    if (permission === 'granted') {
+                        console.log('Notification permission granted');
+                    }
+                });
+            }
+        }
+
+        // Set up daily check for Saturday reports
+        function setupDailyCheck() {
+            // Check every hour if it's Saturday and time to send report
+            setInterval(() => {
+                checkWeeklyReport();
+            }, 60 * 60 * 1000); // Check every hour
+            
+            // Also check when user becomes active (focus event)
+            window.addEventListener('focus', () => {
+                setTimeout(checkWeeklyReport, 1000);
+            });
+        }
+
+        // Show browser notification
+        function showNotification(title, message, options = {}) {
+            if ('Notification' in window && Notification.permission === 'granted') {
+                new Notification(title, {
+                    body: message,
+                    icon: 'favicon.ico',
+                    badge: 'favicon.ico',
+                    ...options
+                });
+            }
+        }
+
+        // Enhanced weekly report check with notifications (override the previous function)
+        function checkWeeklyReport() {
+            const today = new Date();
+            const dayOfWeek = today.getDay(); // 0 = Sunday, 6 = Saturday
+            const hour = today.getHours();
+            
+            // Check if today is Saturday (6) and it's between 8 AM and 10 PM
+            if (dayOfWeek === 6 && hour >= 8 && hour <= 22) {
+                const lastReportDate = localStorage.getItem('examTracker_lastReportDate');
+                const todayString = today.toDateString();
+                
+                // If no report sent today, send one
+                if (lastReportDate !== todayString) {
+                    // Show notification first
+                    showNotification(
+                        '📊 Weekly Report Ready!',
+                        'Generating your weekly exam readiness report and sending to haskhr@hotmail.com',
+                        { requireInteraction: true }
+                    );
+                    
+                    setTimeout(() => {
+                        generateAndEmailReport();
+                    }, 3000); // Wait 3 seconds after notification
+                }
+            }
+            
+            // Show reminder notification on Friday evening
+            if (dayOfWeek === 5 && hour >= 18 && hour <= 20) { // Friday 6-8 PM
+                const lastReminderDate = localStorage.getItem('examTracker_lastReminderDate');
+                const todayString = today.toDateString();
+                
+                if (lastReminderDate !== todayString) {
+                    showNotification(
+                        '📚 Weekly Report Reminder',
+                        'Your weekly exam report will be generated tomorrow (Saturday). Make sure to update your progress!',
+                        { requireInteraction: false }
+                    );
+                    localStorage.setItem('examTracker_lastReminderDate', todayString);
+                }
             }
         }
 

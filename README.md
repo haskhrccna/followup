@@ -8,6 +8,8 @@ A comprehensive exam readiness tracking application for students to monitor thei
 - **Study Progress**: Monitor chapter completion with date tracking
 - **Exam Results**: Record exam scores with historical data and previous score tracking
 - **PDF Reports**: Generate comprehensive performance reports
+- **📧 Automatic Weekly Reports**: PDF reports automatically generated and emailed every Saturday
+- **🔔 Smart Notifications**: Browser notifications for report generation and reminders
 - **Secure Authentication**: Login system with session management
 - **Responsive Design**: Works on desktop and mobile devices
 - **Local Storage**: All data persists in browser localStorage
@@ -49,6 +51,20 @@ A comprehensive exam readiness tracking application for students to monitor thei
 - Date-stamped report generation
 - Professional formatting
 
+### 📧 Automatic Weekly Email Reports
+- **Schedule**: Every Saturday between 8 AM - 10 PM
+- **Recipient**: haskhr@hotmail.com
+- **Priority**: High importance flag
+- **Content**: Complete PDF report with all progress data
+- **Notifications**: Browser alerts when reports are generated
+- **Reminders**: Friday evening notifications to update progress
+
+### 🔔 Smart Notifications
+- Weekly report generation alerts
+- Friday evening progress reminders
+- Browser notification support
+- Non-intrusive user experience
+
 ### 🔐 Authentication
 - Secure login system
 - Session persistence
@@ -62,6 +78,32 @@ A comprehensive exam readiness tracking application for students to monitor thei
 4. **Exam Recording**: Enter exam scores and dates
 5. **Report Generation**: Click "Full Report" to download PDF summaries
 6. **Data Persistence**: All changes are automatically saved to localStorage
+
+## Setup Instructions
+
+### Basic Deployment
+1. Upload all files to your GitHub repository
+2. Enable GitHub Pages in repository settings
+3. Configure custom domain: `followup.hassan-adam.com`
+4. Set up DNS CNAME record pointing to your GitHub Pages URL
+
+### Email Functionality Setup
+To enable automatic weekly email reports:
+
+1. **Create EmailJS Account**: Sign up at [EmailJS.com](https://www.emailjs.com/)
+2. **Configure Email Service**: Connect your email provider (Gmail/Outlook recommended)
+3. **Create Email Template**: Set up template for weekly reports
+4. **Update Application**: Replace placeholder values in `index.html`:
+   - `YOUR_EMAILJS_PUBLIC_KEY`
+   - `YOUR_SERVICE_ID`
+   - `YOUR_TEMPLATE_ID`
+
+📋 **Detailed Setup Guide**: See `EMAILJS_SETUP.md` for complete instructions
+
+### Browser Permissions
+- **Notifications**: Allow browser notifications for report alerts
+- **Downloads**: Ensure PDF downloads are enabled
+- **LocalStorage**: Required for data persistence
 
 ## Development
 
