@@ -1,0 +1,617 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Subject Details - Exam Readiness Tracker</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 30px;
+            color: white;
+        }
+
+        .back-btn {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .back-btn:hover {
+            background: rgba(255,255,255,0.3);
+            transform: translateY(-2px);
+        }
+
+        .subject-header {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+            display: flex;
+            align-items: center;
+            gap: 30px;
+        }
+
+        .subject-icon {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+        }
+
+        .arabic-icon { background: linear-gradient(135deg, #ff9a9e, #fecfef); }
+        .english-icon { background: linear-gradient(135deg, #a8edea, #fed6e3); }
+        .chemistry-icon { background: linear-gradient(135deg, #d299c2, #fef9d7); }
+        .physics-icon { background: linear-gradient(135deg, #89f7fe, #66a6ff); }
+        .biology-icon { background: linear-gradient(135deg, #85ffbd, #fffb7d); }
+
+        .subject-info h1 {
+            font-size: 2.5rem;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .subject-score {
+            font-size: 1.2rem;
+            color: #666;
+            margin-bottom: 15px;
+        }
+
+        .readiness-display {
+            font-size: 2rem;
+            font-weight: bold;
+        }
+
+        .readiness-display.ready { color: #28a745; }
+        .readiness-display.needs-work { color: #ffc107; }
+        .readiness-display.not-ready { color: #dc3545; }
+
+        .content-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        .section {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        .section h2 {
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 1.5rem;
+        }
+
+        .chapters-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 15px;
+        }
+
+        .chapter-input {
+            text-align: center;
+        }
+
+        .chapter-input label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #333;
+        }
+
+        .chapter-input input {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #e1e5e9;
+            border-radius: 8px;
+            text-align: center;
+            font-size: 16px;
+        }
+
+        .chapter-input input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .exams-container {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .exam-input {
+            border: 1px solid #e1e5e9;
+            border-radius: 10px;
+            padding: 20px;
+            background: #f8f9fa;
+        }
+
+        .exam-input label {
+            display: block;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 1.1rem;
+        }
+
+        .previous-score {
+            background: #e9ecef;
+            border-radius: 8px;
+            padding: 10px;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .previous-score.has-score {
+            background: #d1ecf1;
+            border: 1px solid #bee5eb;
+        }
+
+        .score-text {
+            font-weight: 600;
+            color: #495057;
+            font-size: 14px;
+        }
+
+        .date-text {
+            font-size: 12px;
+            color: #6c757d;
+            margin-top: 4px;
+        }
+
+        .exam-inputs {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .exam-inputs input {
+            padding: 12px;
+            border: 2px solid #e1e5e9;
+            border-radius: 8px;
+            font-size: 16px;
+        }
+
+        .exam-inputs input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 40px;
+            color: white;
+            font-size: 1.2rem;
+        }
+
+        .message {
+            display: none;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 20px 0;
+            text-align: center;
+        }
+
+        .message.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .message.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        @media (max-width: 768px) {
+            .content-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .subject-header {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .chapters-grid {
+                grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+            }
+            
+            .exam-inputs {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <a href="index.html" class="back-btn">
+                ← Back to Dashboard
+            </a>
+            <h1 id="page-title">Subject Details</h1>
+        </div>
+
+        <div class="subject-header">
+            <div class="subject-icon" id="subject-icon">📚</div>
+            <div class="subject-info">
+                <h1 id="subject-name">Subject</h1>
+                <div class="subject-score" id="subject-score">0 points</div>
+                <div class="readiness-display" id="subject-readiness">0.0%</div>
+            </div>
+        </div>
+
+        <div class="content-grid">
+            <div class="section">
+                <h2>📖 Study Progress</h2>
+                <div class="chapters-grid" id="chapters-container">
+                    <!-- Chapter inputs will be dynamically generated -->
+                </div>
+            </div>
+
+            <div class="section">
+                <h2>📝 Exam Results</h2>
+                <div class="exams-container" id="exams-container">
+                    <!-- Exam inputs will be dynamically generated -->
+                </div>
+            </div>
+        </div>
+
+        <div class="loading" id="loading">
+            <p>Loading data...</p>
+        </div>
+
+        <div class="message success" id="success-message"></div>
+        <div class="message error" id="error-message"></div>
+    </div>
+
+    <script>
+        let currentSubject = '';
+        let examData = {};
+        let subjectData = {};
+        
+        const subjectIcons = {
+            'arabic': '🕌',
+            'english': '🇬🇧',
+            'chemistry': '⚗️',
+            'physics': '⚛️',
+            'biology': '🧬'
+        };
+        
+        const subjectColors = {
+            'arabic': 'arabic-icon',
+            'english': 'english-icon',
+            'chemistry': 'chemistry-icon',
+            'physics': 'physics-icon',
+            'biology': 'biology-icon'
+        };
+
+        // Get subject from URL parameters
+        function getSubjectFromURL() {
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get('subject') || 'arabic';
+        }
+
+        // Initialize the application
+        document.addEventListener('DOMContentLoaded', function() {
+            if (!checkAuth()) {
+                window.location.href = 'login.html';
+                return;
+            }
+            
+            currentSubject = getSubjectFromURL();
+            loadSubjectData();
+        });
+
+        function checkAuth() {
+            return localStorage.getItem('examTracker_loggedIn') === 'true';
+        }
+
+        function loadSubjectData() {
+            try {
+                showLoading(true);
+                
+                // Load data from localStorage
+                const savedData = localStorage.getItem('examTracker_data');
+                if (savedData) {
+                    examData = JSON.parse(savedData);
+                } else {
+                    // Initialize with default data if not found
+                    examData = initializeDefaultData();
+                    saveData();
+                }
+                
+                // Capitalize first letter for data access
+                const subjectKey = currentSubject.charAt(0).toUpperCase() + currentSubject.slice(1);
+                subjectData = examData[subjectKey];
+                
+                if (!subjectData) {
+                    throw new Error('Subject not found');
+                }
+                
+                renderSubjectDetails();
+            } catch (error) {
+                showError('Failed to load subject data: ' + error.message);
+            } finally {
+                showLoading(false);
+            }
+        }
+
+        function initializeDefaultData() {
+            const subjects = ['Arabic', 'English', 'Chemistry', 'Physics', 'Biology'];
+            const defaultData = {};
+            
+            subjects.forEach(subject => {
+                defaultData[subject] = {
+                    full_score: subject === 'Arabic' ? 80 : 60,
+                    readiness: subject === 'Arabic' ? 0.009 : 0.0,
+                    chapters: {},
+                    exams: {},
+                    exam_history: []
+                };
+                
+                // Initialize chapters
+                for (let i = 1; i <= 10; i++) {
+                    defaultData[subject].chapters[`Chapter ${i}`] = {
+                        studied: false,
+                        date_studied: null
+                    };
+                }
+                
+                // Initialize exams
+                for (let i = 1; i <= 5; i++) {
+                    defaultData[subject].exams[`Exam ${i}`] = {
+                        score: null,
+                        date: null,
+                        previous_score: null,
+                        previous_date: null
+                    };
+                }
+            });
+            
+            // Calculate overall readiness
+            const totalReadiness = Object.values(defaultData).reduce((sum, subject) => sum + subject.readiness, 0);
+            defaultData.overall_readiness = totalReadiness / subjects.length;
+            
+            return defaultData;
+        }
+
+        function renderSubjectDetails() {
+            const subjectKey = currentSubject.charAt(0).toUpperCase() + currentSubject.slice(1);
+            
+            // Update header
+            document.getElementById('page-title').textContent = `${subjectKey} Details`;
+            document.getElementById('subject-icon').className = `subject-icon ${subjectColors[currentSubject]}`;
+            document.getElementById('subject-icon').textContent = subjectIcons[currentSubject];
+            document.getElementById('subject-name').textContent = subjectKey;
+            document.getElementById('subject-score').textContent = `${subjectData.full_score} points`;
+            
+            updateReadinessDisplay();
+            renderChapters();
+            renderExams();
+        }
+
+        function updateReadinessDisplay() {
+            const readiness = subjectData.readiness * 100;
+            const readinessElement = document.getElementById('subject-readiness');
+            
+            readinessElement.textContent = readiness.toFixed(1) + '%';
+            
+            if (readiness >= 70) {
+                readinessElement.className = 'readiness-display ready';
+            } else if (readiness >= 50) {
+                readinessElement.className = 'readiness-display needs-work';
+            } else {
+                readinessElement.className = 'readiness-display not-ready';
+            }
+        }
+
+        function renderChapters() {
+            const container = document.getElementById('chapters-container');
+            container.innerHTML = '';
+            
+            // Convert chapters object to array for rendering
+            const chapters = Object.keys(subjectData.chapters);
+            
+            chapters.forEach((chapterName, index) => {
+                const chapterData = subjectData.chapters[chapterName];
+                const chapterDiv = document.createElement('div');
+                chapterDiv.className = 'chapter-input';
+                chapterDiv.innerHTML = `
+                    <label>Ch ${index + 1}</label>
+                    <input type="checkbox" ${chapterData.studied ? 'checked' : ''} 
+                           onchange="updateChapter('${chapterName}', this.checked)">
+                `;
+                container.appendChild(chapterDiv);
+            });
+        }
+
+        function renderExams() {
+            const container = document.getElementById('exams-container');
+            container.innerHTML = '';
+            
+            // Convert exams object to array for rendering
+            const exams = Object.keys(subjectData.exams);
+            
+            exams.forEach((examName, index) => {
+                const examData = subjectData.exams[examName];
+                const examDiv = document.createElement('div');
+                examDiv.className = 'exam-input';
+                
+                // Create previous score label
+                let previousScoreHTML = '';
+                if (examData.previous_score !== null && examData.previous_score !== undefined) {
+                    const dateText = examData.previous_date ? `on ${new Date(examData.previous_date).toLocaleDateString()}` : '';
+                    previousScoreHTML = `
+                        <div class="previous-score has-score">
+                            <div class="score-text">Previous: ${examData.previous_score}/50</div>
+                            <div class="date-text">${dateText}</div>
+                        </div>
+                    `;
+                } else {
+                    previousScoreHTML = `
+                        <div class="previous-score">
+                            <div class="score-text">No previous score</div>
+                        </div>
+                    `;
+                }
+                
+                examDiv.innerHTML = `
+                    <label>${examName}</label>
+                    ${previousScoreHTML}
+                    <div class="exam-inputs">
+                        <input type="number" min="0" max="50" value="${examData.score || ''}" 
+                               placeholder="Score (0-50)" onchange="updateExam('${examName}', this.value)">
+                        <input type="date" value="${examData.date || ''}" 
+                               onchange="updateExamDate('${examName}', this.value)">
+                    </div>
+                `;
+                container.appendChild(examDiv);
+            });
+        }
+
+        function updateChapter(chapterName, studied) {
+            // Store previous state for history
+            const wasStudied = subjectData.chapters[chapterName].studied;
+            
+            subjectData.chapters[chapterName].studied = studied;
+            subjectData.chapters[chapterName].date_studied = studied ? new Date().toISOString().split('T')[0] : null;
+            
+            updateSubjectData();
+        }
+
+        function updateExam(examName, value) {
+            const currentScore = subjectData.exams[examName].score;
+            const newScore = parseInt(value) || null;
+            
+            // Store previous score if there was one and it's different
+            if (currentScore !== null && currentScore !== newScore) {
+                subjectData.exams[examName].previous_score = currentScore;
+                subjectData.exams[examName].previous_date = subjectData.exams[examName].date;
+                
+                // Add to exam history
+                if (!subjectData.exam_history) {
+                    subjectData.exam_history = [];
+                }
+                subjectData.exam_history.push({
+                    exam_name: examName,
+                    score: currentScore,
+                    date: subjectData.exams[examName].date,
+                    timestamp: new Date().toISOString()
+                });
+            }
+            
+            subjectData.exams[examName].score = newScore;
+            updateSubjectData();
+        }
+
+        function updateExamDate(examName, value) {
+            subjectData.exams[examName].date = value;
+            updateSubjectData();
+        }
+
+        function updateSubjectData() {
+            try {
+                // Calculate readiness based on chapters and exams
+                const chapters = Object.values(subjectData.chapters);
+                const exams = Object.values(subjectData.exams);
+                
+                // Study progress (chapters)
+                const studiedChapters = chapters.filter(ch => ch.studied).length;
+                const studyProgress = chapters.length > 0 ? studiedChapters / chapters.length : 0;
+                
+                // Exam progress
+                const completedExams = exams.filter(ex => ex.score !== null).length;
+                const examProgress = exams.length > 0 ? completedExams / exams.length : 0;
+                
+                // Average exam score
+                const examScores = exams.filter(ex => ex.score !== null).map(ex => ex.score);
+                const avgExamScore = examScores.length > 0 ? examScores.reduce((a, b) => a + b, 0) / examScores.length : 0;
+                const examScoreRatio = avgExamScore / 50; // Assuming max score is 50
+                
+                // Combined readiness (weighted average)
+                subjectData.readiness = (studyProgress * 0.3) + (examProgress * 0.3) + (examScoreRatio * 0.4);
+                
+                // Update overall readiness in examData
+                const subjects = ['Arabic', 'English', 'Chemistry', 'Physics', 'Biology'];
+                const totalReadiness = subjects.reduce((sum, subject) => {
+                    return sum + (examData[subject] ? examData[subject].readiness : 0);
+                }, 0);
+                examData.overall_readiness = totalReadiness / subjects.length;
+                
+                // Save to localStorage
+                saveData();
+                
+                // Re-render to show updates
+                updateReadinessDisplay();
+                renderExams(); // Re-render to show updated previous scores
+                
+                showSuccess('Data updated successfully!');
+            } catch (error) {
+                showError('Failed to update data: ' + error.message);
+            }
+        }
+
+        function saveData() {
+            localStorage.setItem('examTracker_data', JSON.stringify(examData));
+        }
+
+        function showLoading(show) {
+            document.getElementById('loading').style.display = show ? 'block' : 'none';
+        }
+
+        function showSuccess(message) {
+            const element = document.getElementById('success-message');
+            element.textContent = message;
+            element.style.display = 'block';
+            setTimeout(() => element.style.display = 'none', 3000);
+        }
+
+        function showError(message) {
+            const element = document.getElementById('error-message');
+            element.textContent = message;
+            element.style.display = 'block';
+            setTimeout(() => element.style.display = 'none', 5000);
+        }
+    </script>
+</body>
+</html>
+
