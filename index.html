@@ -76,20 +76,34 @@
             border: 1px solid #ddd;
             font-size: 0.7rem;
             position: relative;
+            background-color: white;
         }
 
-        .schedule-table tr:nth-child(even) {
+        .schedule-table tr:nth-child(even) td {
             background-color: #f8f9fa;
         }
 
-        .schedule-table tr:hover {
+        .schedule-table tr:hover td {
             background-color: #e3f2fd;
+        }
+
+        .schedule-table tbody tr {
+            background-color: white;
         }
 
         .subject-cell {
             font-weight: bold;
             text-align: left !important;
             padding-left: 8px;
+            background-color: white !important;
+        }
+
+        .schedule-table tbody tr:nth-child(even) .subject-cell {
+            background-color: #f8f9fa !important;
+        }
+
+        .schedule-table tbody tr:hover .subject-cell {
+            background-color: #e3f2fd !important;
         }
 
         .time-slot {
@@ -112,9 +126,11 @@
 
         .weekly-chart {
             margin-top: 15px;
-            padding: 10px;
-            background: #f8f9fa;
+            padding: 15px;
+            background: white;
+            border: 1px solid #e9ecef;
             border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
         }
 
         .chart-title {
@@ -141,7 +157,8 @@
         .chart-progress {
             flex: 1;
             height: 15px;
-            background: #e9ecef;
+            background: #f1f3f4;
+            border: 1px solid #e0e0e0;
             border-radius: 7px;
             margin: 0 5px;
             position: relative;
