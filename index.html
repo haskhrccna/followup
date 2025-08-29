@@ -21,7 +21,150 @@
         .container {
             max-width: 1200px;
             margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1fr 300px;
+            grid-gap: 20px;
         }
+
+        .main-content {
+            grid-column: 1;
+        }
+
+        .schedule-sidebar {
+            grid-column: 2;
+            position: sticky;
+            top: 20px;
+            height: fit-content;
+        }
+
+        .schedule-container {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+
+        .schedule-title {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 15px;
+            text-align: center;
+            border-bottom: 2px solid #667eea;
+            padding-bottom: 10px;
+        }
+
+        .schedule-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.85rem;
+        }
+
+        .schedule-table th {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 8px 4px;
+            text-align: center;
+            font-size: 0.75rem;
+            border: 1px solid #ddd;
+        }
+
+        .schedule-table td {
+            padding: 6px 4px;
+            text-align: center;
+            border: 1px solid #ddd;
+            font-size: 0.7rem;
+            position: relative;
+        }
+
+        .schedule-table tr:nth-child(even) {
+            background-color: #f8f9fa;
+        }
+
+        .schedule-table tr:hover {
+            background-color: #e3f2fd;
+        }
+
+        .subject-cell {
+            font-weight: bold;
+            text-align: left !important;
+            padding-left: 8px;
+        }
+
+        .time-slot {
+            background: linear-gradient(90deg, #28a745 0%, #20c997 100%);
+            color: white;
+            font-weight: bold;
+            border-radius: 3px;
+            padding: 2px 4px;
+            font-size: 0.65rem;
+        }
+
+        .online-slot {
+            background: linear-gradient(90deg, #6f42c1 0%, #e83e8c 100%);
+            color: white;
+            font-weight: bold;
+            border-radius: 3px;
+            padding: 2px 4px;
+            font-size: 0.65rem;
+        }
+
+        .weekly-chart {
+            margin-top: 15px;
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 10px;
+        }
+
+        .chart-title {
+            font-size: 0.9rem;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+
+        .chart-bar {
+            display: flex;
+            align-items: center;
+            margin-bottom: 5px;
+            font-size: 0.7rem;
+        }
+
+        .chart-label {
+            width: 60px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .chart-progress {
+            flex: 1;
+            height: 15px;
+            background: #e9ecef;
+            border-radius: 7px;
+            margin: 0 5px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .chart-fill {
+            height: 100%;
+            border-radius: 7px;
+            transition: width 0.3s ease;
+        }
+
+        .chart-hours {
+            font-size: 0.65rem;
+            color: #666;
+            min-width: 30px;
+        }
+
+        .arabic-fill { background: linear-gradient(90deg, #ff6b6b, #ffa726); }
+        .english-fill { background: linear-gradient(90deg, #4ecdc4, #44a08d); }
+        .chemistry-fill { background: linear-gradient(90deg, #a8edea, #fed6e3); }
+        .physics-fill { background: linear-gradient(90deg, #667eea, #764ba2); }
+        .biology-fill { background: linear-gradient(90deg, #96fbc4, #f9f586); }
 
         .header {
             text-align: center;
@@ -219,11 +362,46 @@
             border: 1px solid #f5c6cb;
         }
 
+        @media (max-width: 1024px) {
+            .container {
+                grid-template-columns: 1fr;
+                grid-gap: 15px;
+            }
+            
+            .schedule-sidebar {
+                order: -1;
+                position: static;
+            }
+            
+            .schedule-container {
+                margin-bottom: 30px;
+            }
+        }
+
         @media (max-width: 768px) {
             .header h1 { font-size: 2rem; }
             .overall-readiness { font-size: 3rem; }
             .subjects-grid { grid-template-columns: 1fr; }
             .auth-controls { position: static; text-align: center; margin-bottom: 20px; }
+            
+            .schedule-table {
+                font-size: 0.75rem;
+            }
+            
+            .schedule-table th {
+                padding: 6px 2px;
+                font-size: 0.7rem;
+            }
+            
+            .schedule-table td {
+                padding: 4px 2px;
+                font-size: 0.65rem;
+            }
+            
+            .time-slot, .online-slot {
+                font-size: 0.6rem;
+                padding: 1px 2px;
+            }
         }
     </style>
 </head>
@@ -233,31 +411,138 @@
             <button class="logout-btn" onclick="logout()">Logout</button>
         </div>
 
-        <div class="header">
-            <h1>📚 Exam Readiness Tracker</h1>
-            <div class="student-name">Raghad Hassan Adam</div>
-            <p>Track your study progress and exam readiness across all subjects</p>
+        <div class="main-content">
+            <div class="header">
+                <h1>📚 Exam Readiness Tracker</h1>
+                <div class="student-name">Raghad Hassan Adam</div>
+                <p>Track your study progress and exam readiness across all subjects</p>
+            </div>
+
+            <div class="overall-stats">
+                <div class="overall-readiness" id="overall-readiness">0.0%</div>
+                <div class="overall-status" id="overall-status">More Study Needed 📚</div>
+            </div>
+
+            <div class="report-section">
+                <button class="report-btn" onclick="generateFullReport()">📊 Full Report</button>
+            </div>
+
+            <div class="subjects-grid" id="subjects-container">
+                <!-- Subject cards will be dynamically generated -->
+            </div>
+
+            <div class="loading" id="loading">
+                <p>Loading data...</p>
+            </div>
+
+            <div class="message success" id="success-message"></div>
+            <div class="message error" id="error-message"></div>
         </div>
 
-        <div class="overall-stats">
-            <div class="overall-readiness" id="overall-readiness">0.0%</div>
-            <div class="overall-status" id="overall-status">More Study Needed 📚</div>
+        <div class="schedule-sidebar">
+            <div class="schedule-container">
+                <div class="schedule-title">📅 External Study Schedule</div>
+                <table class="schedule-table">
+                    <thead>
+                        <tr>
+                            <th>Subject</th>
+                            <th>Mon</th>
+                            <th>Tue</th>
+                            <th>Wed</th>
+                            <th>Thu</th>
+                            <th>Fri</th>
+                            <th>Sat</th>
+                            <th>Sun</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="subject-cell">🕌 Arabic</td>
+                            <td>-</td>
+                            <td><span class="time-slot">13:30</span></td>
+                            <td>-</td>
+                            <td><span class="time-slot">13:30</span></td>
+                            <td>-</td>
+                            <td><span class="time-slot">10:30</span></td>
+                            <td>-</td>
+                        </tr>
+                        <tr>
+                            <td class="subject-cell">🇬🇧 English</td>
+                            <td>-</td>
+                            <td><span class="time-slot">9:00</span></td>
+                            <td>-</td>
+                            <td>-</td>
+                            <td>-</td>
+                            <td><span class="time-slot">9:00</span></td>
+                            <td>-</td>
+                        </tr>
+                        <tr>
+                            <td class="subject-cell">⚗️ Chemistry</td>
+                            <td>-</td>
+                            <td><span class="time-slot">10:30</span></td>
+                            <td>-</td>
+                            <td><span class="time-slot">10:30</span></td>
+                            <td>-</td>
+                            <td>-</td>
+                            <td>-</td>
+                        </tr>
+                        <tr>
+                            <td class="subject-cell">⚛️ Physics</td>
+                            <td><span class="time-slot">8:00</span></td>
+                            <td>-</td>
+                            <td>-</td>
+                            <td><span class="time-slot">8:00</span></td>
+                            <td>-</td>
+                            <td>-</td>
+                            <td>-</td>
+                        </tr>
+                        <tr>
+                            <td class="subject-cell">🧬 Biology</td>
+                            <td colspan="7"><span class="online-slot">Online Study</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+                
+                <div class="weekly-chart">
+                    <div class="chart-title">📊 Weekly Hours</div>
+                    <div class="chart-bar">
+                        <div class="chart-label">Arabic</div>
+                        <div class="chart-progress">
+                            <div class="chart-fill arabic-fill" style="width: 75%;"></div>
+                        </div>
+                        <div class="chart-hours">3h</div>
+                    </div>
+                    <div class="chart-bar">
+                        <div class="chart-label">English</div>
+                        <div class="chart-progress">
+                            <div class="chart-fill english-fill" style="width: 50%;"></div>
+                        </div>
+                        <div class="chart-hours">2h</div>
+                    </div>
+                    <div class="chart-bar">
+                        <div class="chart-label">Chemistry</div>
+                        <div class="chart-progress">
+                            <div class="chart-fill chemistry-fill" style="width: 50%;"></div>
+                        </div>
+                        <div class="chart-hours">2h</div>
+                    </div>
+                    <div class="chart-bar">
+                        <div class="chart-label">Physics</div>
+                        <div class="chart-progress">
+                            <div class="chart-fill physics-fill" style="width: 50%;"></div>
+                        </div>
+                        <div class="chart-hours">2h</div>
+                    </div>
+                    <div class="chart-bar">
+                        <div class="chart-label">Biology</div>
+                        <div class="chart-progress">
+                            <div class="chart-fill biology-fill" style="width: 100%;"></div>
+                        </div>
+                        <div class="chart-hours">Online</div>
+                    </div>
+                </div>
+            </div>
         </div>
-
-        <div class="report-section">
-            <button class="report-btn" onclick="generateFullReport()">📊 Full Report</button>
-        </div>
-
-        <div class="subjects-grid" id="subjects-container">
-            <!-- Subject cards will be dynamically generated -->
-        </div>
-
-        <div class="loading" id="loading">
-            <p>Loading data...</p>
-        </div>
-
-        <div class="message success" id="success-message"></div>
-        <div class="message error" id="error-message"></div>
     </div>
 
     <!-- Include jsPDF for client-side PDF generation -->
@@ -522,7 +807,7 @@
         function initializeEmailJS() {
             // Initialize EmailJS with your public key
             // Note: You'll need to replace this with your actual EmailJS public key
-            emailjs.init("EJBPC9IYQybz6OVNx");
+            emailjs.init("YOUR_EMAILJS_PUBLIC_KEY");
         }
 
         // Generate PDF and send via email
@@ -632,8 +917,8 @@
             // Send email using EmailJS
             // Note: You'll need to replace these with your actual EmailJS service and template IDs
             await emailjs.send(
-                'haskhr@hotmail.com',
-                'template_khb7bet',
+                'YOUR_SERVICE_ID',
+                'YOUR_TEMPLATE_ID',
                 templateParams
             );
         }
