@@ -35,6 +35,11 @@
             left: 20px;
             width: 320px;
             z-index: 1000;
+            resize: both;
+            overflow: auto;
+            min-width: 280px;
+            max-width: 500px;
+            min-height: 400px;
         }
 
         .schedule-container {
@@ -43,6 +48,39 @@
             padding: 20px;
             box-shadow: 0 8px 20px rgba(0,0,0,0.1);
             margin-bottom: 15px;
+            height: 100%;
+            position: relative;
+        }
+
+        .schedule-controls {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            display: flex;
+            gap: 5px;
+        }
+
+        .edit-btn, .save-btn {
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 4px 8px;
+            font-size: 0.6rem;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .edit-btn:hover, .save-btn:hover {
+            background: #5a6fd8;
+        }
+
+        .save-btn {
+            background: #28a745;
+        }
+
+        .save-btn:hover {
+            background: #218838;
         }
 
         .schedule-title {
@@ -61,66 +99,106 @@
             font-size: 0.75rem;
             border-radius: 10px;
             overflow: hidden;
+            border: 1px solid #e0e0e0;
         }
 
         .schedule-table th {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
-            padding: 8px 4px;
+            padding: 10px 6px;
             text-align: center;
-            font-size: 0.7rem;
+            font-size: 0.75rem;
             border: none;
             font-weight: 600;
         }
 
         .schedule-table td {
-            padding: 8px 4px;
+            padding: 10px 6px;
             text-align: center;
-            border: 1px solid #e9ecef;
-            font-size: 0.65rem;
+            border: 1px solid #e8e8e8;
+            font-size: 0.7rem;
             position: relative;
-            background-color: white !important;
+            background-color: white;
         }
 
+        .schedule-table td.editable {
+            cursor: text;
+            transition: background-color 0.2s;
+        }
+
+        .schedule-table td.editable:hover {
+            background-color: #f0f8ff !important;
+        }
+
+        .schedule-table td.editable:focus {
+            outline: 2px solid #667eea;
+            background-color: #fff !important;
+        }
+
+        .time-slot.editable {
+            cursor: text;
+            min-width: 40px;
+            display: inline-block;
+        }
+
+        .time-slot.editable:hover {
+            opacity: 0.8;
+        }
+
+        .add-time-btn {
+            background: #28a745;
+            color: white;
+            border: none;
+            border-radius: 3px;
+            padding: 1px 4px;
+            font-size: 0.5rem;
+            cursor: pointer;
+            margin-left: 2px;
+        }
+
+        .remove-time-btn {
+            background: #dc3545;
+            color: white;
+            border: none;
+            border-radius: 3px;
+            padding: 1px 4px;
+            font-size: 0.5rem;
+            cursor: pointer;
+            margin-left: 2px;
+        }
+
+        /* Very subtle alternating row colors */
         .schedule-table tr:nth-child(even) td {
-            background-color: #f8f9fa !important;
+            background-color: #fafafa;
         }
 
-        .schedule-table tr:hover td {
-            background-color: #e3f2fd !important;
-        }
-
-        .schedule-table tbody tr {
-            background-color: white !important;
-        }
-
-        .schedule-table tbody td {
-            background-color: white !important;
+        .schedule-table tr:nth-child(odd) td {
+            background-color: white;
         }
 
         .subject-cell {
-            font-weight: bold;
+            font-weight: 600;
             text-align: left !important;
-            padding-left: 8px;
-            background-color: white !important;
-            font-size: 0.65rem;
+            padding-left: 12px;
+            font-size: 0.7rem;
         }
 
-        .schedule-table tbody tr:nth-child(even) .subject-cell {
-            background-color: #f8f9fa !important;
+        /* Ensure subject cells follow the same alternating pattern */
+        .schedule-table tr:nth-child(even) .subject-cell {
+            background-color: #fafafa;
         }
 
-        .schedule-table tbody tr:hover .subject-cell {
-            background-color: #e3f2fd !important;
+        .schedule-table tr:nth-child(odd) .subject-cell {
+            background-color: white;
         }
 
         .time-slot {
             background: linear-gradient(90deg, #28a745 0%, #20c997 100%);
             color: white;
             font-weight: bold;
-            border-radius: 4px;
-            padding: 2px 4px;
-            font-size: 0.6rem;
+            border-radius: 5px;
+            padding: 3px 6px;
+            font-size: 0.65rem;
             display: inline-block;
         }
 
@@ -128,33 +206,13 @@
             background: linear-gradient(90deg, #6f42c1 0%, #e83e8c 100%);
             color: white;
             font-weight: bold;
-            border-radius: 4px;
-            padding: 2px 4px;
-            font-size: 0.6rem;
+            border-radius: 5px;
+            padding: 3px 6px;
+            font-size: 0.65rem;
             display: inline-block;
         }
 
-        /* Ensure all table cells have white backgrounds */
-        .schedule-table td {
-            padding: 7px 5px;
-            text-align: center;
-            border: 1px solid #ddd;
-            font-size: 0.84rem;
-            position: relative;
-            background-color: white !important;
-        }
 
-        .schedule-table td:not(.subject-cell) {
-            background-color: white !important;
-        }
-
-        .schedule-table tr:nth-child(even) td:not(.subject-cell) {
-            background-color: white !important;
-        }
-
-        .schedule-table tr:hover td:not(.subject-cell) {
-            background-color: #f0f8ff !important;
-        }
 
         .weekly-chart {
             margin-top: 15px;
@@ -490,6 +548,11 @@
 
         <div class="schedule-sidebar">
             <div class="schedule-container">
+                <div class="schedule-controls">
+                    <button class="edit-btn" onclick="toggleEditMode()">✏️ Edit</button>
+                    <button class="save-btn" onclick="saveSchedule()" style="display:none;">💾 Save</button>
+                </div>
+                
                 <div class="schedule-title">📅 External Study Schedule</div>
                 <table class="schedule-table">
                     <thead>
@@ -507,47 +570,53 @@
                     <tbody>
                         <tr>
                             <td class="subject-cell">🕌 Arabic</td>
-                            <td>-</td>
-                            <td><span class="time-slot">13:30</span></td>
-                            <td>-</td>
-                            <td><span class="time-slot">13:30</span></td>
-                            <td>-</td>
-                            <td><span class="time-slot">10:30</span></td>
-                            <td>-</td>
+                            <td class="editable" data-subject="arabic" data-day="mon">-</td>
+                            <td class="editable" data-subject="arabic" data-day="tue"><span class="time-slot">13:30</span></td>
+                            <td class="editable" data-subject="arabic" data-day="wed">-</td>
+                            <td class="editable" data-subject="arabic" data-day="thu"><span class="time-slot">13:30</span></td>
+                            <td class="editable" data-subject="arabic" data-day="fri">-</td>
+                            <td class="editable" data-subject="arabic" data-day="sat"><span class="time-slot">10:30</span></td>
+                            <td class="editable" data-subject="arabic" data-day="sun">-</td>
                         </tr>
                         <tr>
                             <td class="subject-cell">🇬🇧 English</td>
-                            <td>-</td>
-                            <td><span class="time-slot">9:00</span></td>
-                            <td>-</td>
-                            <td>-</td>
-                            <td>-</td>
-                            <td><span class="time-slot">9:00</span></td>
-                            <td>-</td>
+                            <td class="editable" data-subject="english" data-day="mon">-</td>
+                            <td class="editable" data-subject="english" data-day="tue"><span class="time-slot">9:00</span></td>
+                            <td class="editable" data-subject="english" data-day="wed">-</td>
+                            <td class="editable" data-subject="english" data-day="thu">-</td>
+                            <td class="editable" data-subject="english" data-day="fri">-</td>
+                            <td class="editable" data-subject="english" data-day="sat"><span class="time-slot">9:00</span></td>
+                            <td class="editable" data-subject="english" data-day="sun">-</td>
                         </tr>
                         <tr>
                             <td class="subject-cell">⚗️ Chemistry</td>
-                            <td>-</td>
-                            <td><span class="time-slot">10:30</span></td>
-                            <td>-</td>
-                            <td><span class="time-slot">10:30</span></td>
-                            <td>-</td>
-                            <td>-</td>
-                            <td>-</td>
+                            <td class="editable" data-subject="chemistry" data-day="mon">-</td>
+                            <td class="editable" data-subject="chemistry" data-day="tue"><span class="time-slot">10:30</span></td>
+                            <td class="editable" data-subject="chemistry" data-day="wed">-</td>
+                            <td class="editable" data-subject="chemistry" data-day="thu"><span class="time-slot">10:30</span></td>
+                            <td class="editable" data-subject="chemistry" data-day="fri">-</td>
+                            <td class="editable" data-subject="chemistry" data-day="sat">-</td>
+                            <td class="editable" data-subject="chemistry" data-day="sun">-</td>
                         </tr>
                         <tr>
                             <td class="subject-cell">⚛️ Physics</td>
-                            <td><span class="time-slot">8:00</span></td>
-                            <td>-</td>
-                            <td>-</td>
-                            <td><span class="time-slot">8:00</span></td>
-                            <td>-</td>
-                            <td>-</td>
-                            <td>-</td>
+                            <td class="editable" data-subject="physics" data-day="mon"><span class="time-slot">8:00</span></td>
+                            <td class="editable" data-subject="physics" data-day="tue">-</td>
+                            <td class="editable" data-subject="physics" data-day="wed">-</td>
+                            <td class="editable" data-subject="physics" data-day="thu"><span class="time-slot">8:00</span></td>
+                            <td class="editable" data-subject="physics" data-day="fri">-</td>
+                            <td class="editable" data-subject="physics" data-day="sat">-</td>
+                            <td class="editable" data-subject="physics" data-day="sun">-</td>
                         </tr>
                         <tr>
                             <td class="subject-cell">🧬 Biology</td>
-                            <td colspan="7"><span class="online-slot">Online Study</span></td>
+                            <td class="editable" data-subject="biology" data-day="mon">-</td>
+                            <td class="editable" data-subject="biology" data-day="tue">-</td>
+                            <td class="editable" data-subject="biology" data-day="wed">-</td>
+                            <td class="editable" data-subject="biology" data-day="thu">-</td>
+                            <td class="editable" data-subject="biology" data-day="fri">-</td>
+                            <td class="editable" data-subject="biology" data-day="sat">-</td>
+                            <td class="editable" data-subject="biology" data-day="sun"><span class="online-slot">Online Study</span></td>
                         </tr>
                     </tbody>
                 </table>
@@ -1067,4 +1136,153 @@
     </script>
 </body>
 </html>
+
+
+
+    <script>
+        let editMode = false;
+        
+        // Load saved schedule from localStorage
+        function loadSchedule() {
+            const savedSchedule = localStorage.getItem('examSchedule');
+            if (savedSchedule) {
+                const schedule = JSON.parse(savedSchedule);
+                Object.keys(schedule).forEach(key => {
+                    const [subject, day] = key.split('-');
+                    const cell = document.querySelector(`[data-subject="${subject}"][data-day="${day}"]`);
+                    if (cell) {
+                        cell.innerHTML = schedule[key];
+                    }
+                });
+            }
+        }
+        
+        // Save schedule to localStorage
+        function saveSchedule() {
+            const schedule = {};
+            document.querySelectorAll('.editable').forEach(cell => {
+                const subject = cell.dataset.subject;
+                const day = cell.dataset.day;
+                const key = `${subject}-${day}`;
+                schedule[key] = cell.innerHTML;
+            });
+            
+            localStorage.setItem('examSchedule', JSON.stringify(schedule));
+            
+            // Show success message
+            showMessage('Schedule saved successfully!', 'success');
+            
+            // Exit edit mode
+            toggleEditMode();
+        }
+        
+        // Toggle edit mode
+        function toggleEditMode() {
+            editMode = !editMode;
+            const editBtn = document.querySelector('.edit-btn');
+            const saveBtn = document.querySelector('.save-btn');
+            const editableCells = document.querySelectorAll('.editable');
+            
+            if (editMode) {
+                editBtn.style.display = 'none';
+                saveBtn.style.display = 'inline-block';
+                
+                editableCells.forEach(cell => {
+                    cell.contentEditable = true;
+                    cell.style.cursor = 'text';
+                    
+                    // Add click handler for empty cells
+                    cell.addEventListener('click', handleCellClick);
+                    cell.addEventListener('blur', handleCellBlur);
+                });
+                
+                showMessage('Edit mode enabled. Click cells to modify times.', 'info');
+            } else {
+                editBtn.style.display = 'inline-block';
+                saveBtn.style.display = 'none';
+                
+                editableCells.forEach(cell => {
+                    cell.contentEditable = false;
+                    cell.style.cursor = 'default';
+                    cell.removeEventListener('click', handleCellClick);
+                    cell.removeEventListener('blur', handleCellBlur);
+                });
+            }
+        }
+        
+        // Handle cell click in edit mode
+        function handleCellClick(event) {
+            const cell = event.target;
+            if (cell.innerHTML === '-') {
+                cell.innerHTML = '<span class="time-slot">00:00</span>';
+                // Select the time text for easy editing
+                const timeSlot = cell.querySelector('.time-slot');
+                if (timeSlot) {
+                    selectText(timeSlot);
+                }
+            }
+        }
+        
+        // Handle cell blur (when user clicks away)
+        function handleCellBlur(event) {
+            const cell = event.target;
+            const content = cell.innerHTML.trim();
+            
+            // If cell is empty or just whitespace, set to dash
+            if (!content || content === '' || content === '<br>') {
+                cell.innerHTML = '-';
+            } else if (content !== '-' && !content.includes('time-slot') && !content.includes('online-slot')) {
+                // If user typed plain text, wrap it in time-slot span
+                if (content.match(/^\d{1,2}:\d{2}$/)) {
+                    cell.innerHTML = `<span class="time-slot">${content}</span>`;
+                } else if (content.toLowerCase().includes('online')) {
+                    cell.innerHTML = `<span class="online-slot">${content}</span>`;
+                }
+            }
+        }
+        
+        // Select text in element
+        function selectText(element) {
+            const range = document.createRange();
+            range.selectNodeContents(element);
+            const selection = window.getSelection();
+            selection.removeAllRanges();
+            selection.addRange(range);
+        }
+        
+        // Show message to user
+        function showMessage(message, type) {
+            // Create temporary message element
+            const messageEl = document.createElement('div');
+            messageEl.className = `schedule-message ${type}`;
+            messageEl.textContent = message;
+            messageEl.style.cssText = `
+                position: fixed;
+                top: 80px;
+                left: 50%;
+                transform: translateX(-50%);
+                background: ${type === 'success' ? '#d4edda' : type === 'error' ? '#f8d7da' : '#d1ecf1'};
+                color: ${type === 'success' ? '#155724' : type === 'error' ? '#721c24' : '#0c5460'};
+                padding: 10px 20px;
+                border-radius: 5px;
+                border: 1px solid ${type === 'success' ? '#c3e6cb' : type === 'error' ? '#f5c6cb' : '#bee5eb'};
+                z-index: 10000;
+                font-size: 0.9rem;
+            `;
+            
+            document.body.appendChild(messageEl);
+            
+            // Remove message after 3 seconds
+            setTimeout(() => {
+                if (messageEl.parentNode) {
+                    messageEl.parentNode.removeChild(messageEl);
+                }
+            }, 3000);
+        }
+        
+        // Load schedule when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            loadSchedule();
+        });
+    </script>
 
