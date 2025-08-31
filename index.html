@@ -22,6 +22,11 @@
             max-width: 1200px;
             margin: 0 auto;
             position: relative;
+            padding-left: 20px;
+            transition: padding-left 0.3s ease;
+        }
+
+        .container.schedule-visible {
             padding-left: 340px;
         }
 
@@ -29,9 +34,30 @@
             width: 100%;
         }
 
-        .schedule-sidebar {
+        .schedule-toggle {
             position: fixed;
             top: 20px;
+            left: 20px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            padding: 10px 15px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            z-index: 1001;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+        }
+
+        .schedule-toggle:hover {
+            background: #5a6fd8;
+            transform: translateY(-2px);
+        }
+
+        .schedule-sidebar {
+            position: fixed;
+            top: 70px;
             left: 20px;
             width: 320px;
             z-index: 1000;
@@ -40,6 +66,12 @@
             min-width: 280px;
             max-width: 500px;
             min-height: 400px;
+            transform: translateX(-100%);
+            transition: transform 0.3s ease;
+        }
+
+        .schedule-sidebar.visible {
+            transform: translateX(0);
         }
 
         .schedule-container {
@@ -513,7 +545,9 @@
         }    </style>
 </head>
 <body>
-    <div class="container">
+    <button class="schedule-toggle" onclick="toggleSchedule()">📅 Schedule</button>
+    
+    <div class="container" id="main-container">
         <div class="auth-controls">
             <button class="logout-btn" onclick="logout()">Logout</button>
         </div>
@@ -546,7 +580,7 @@
             <div class="message error" id="error-message"></div>
         </div>
 
-        <div class="schedule-sidebar">
+        <div class="schedule-sidebar" id="schedule-sidebar">
             <div class="schedule-container">
                 <div class="schedule-controls">
                     <button class="edit-btn" onclick="toggleEditMode()">✏️ Edit</button>
@@ -1280,9 +1314,36 @@
             }, 3000);
         }
         
+        // Toggle schedule visibility
+        function toggleSchedule() {
+            const sidebar = document.getElementById('schedule-sidebar');
+            const container = document.getElementById('main-container');
+            const toggleBtn = document.querySelector('.schedule-toggle');
+            
+            if (sidebar.classList.contains('visible')) {
+                // Hide schedule
+                sidebar.classList.remove('visible');
+                container.classList.remove('schedule-visible');
+                toggleBtn.textContent = '📅 Schedule';
+                localStorage.setItem('scheduleVisible', 'false');
+            } else {
+                // Show schedule
+                sidebar.classList.add('visible');
+                container.classList.add('schedule-visible');
+                toggleBtn.textContent = '❌ Hide';
+                localStorage.setItem('scheduleVisible', 'true');
+            }
+        }
+        
         // Load schedule when page loads
         document.addEventListener('DOMContentLoaded', function() {
             loadSchedule();
+            
+            // Restore schedule visibility state
+            const scheduleVisible = localStorage.getItem('scheduleVisible');
+            if (scheduleVisible === 'true') {
+                toggleSchedule();
+            }
         });
     </script>
 
