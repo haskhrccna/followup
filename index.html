@@ -127,11 +127,13 @@
 
         .schedule-table {
             width: 100%;
-            border-collapse: collapse;
+            border-collapse: separate;
+            border-spacing: 0;
             font-size: 0.75rem;
             border-radius: 10px;
             overflow: hidden;
             border: 1px solid #e0e0e0;
+            background: white;
         }
 
         .schedule-table th {
@@ -145,12 +147,38 @@
         }
 
         .schedule-table td {
-            padding: 10px 6px;
+            padding: 12px 8px;
             text-align: center;
-            border: 1px solid #e8e8e8;
+            border: none;
             font-size: 0.7rem;
             position: relative;
             background-color: white;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .schedule-table tr {
+            background: white;
+            margin: 0 auto;
+            display: table-row;
+        }
+
+        .schedule-table tbody tr {
+            background: white;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            margin-bottom: 2px;
+        }
+
+        .schedule-table tbody tr:nth-child(even) {
+            background: #fafafa;
+        }
+
+        .schedule-table tbody tr:nth-child(odd) {
+            background: white;
+        }
+
+        .schedule-table tbody tr:hover {
+            background: #f8f9fa !important;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
         }
 
         .schedule-table td.editable {
@@ -167,61 +195,11 @@
             background-color: #fff !important;
         }
 
-        .time-slot.editable {
-            cursor: text;
-            min-width: 40px;
-            display: inline-block;
-        }
-
-        .time-slot.editable:hover {
-            opacity: 0.8;
-        }
-
-        .add-time-btn {
-            background: #28a745;
-            color: white;
-            border: none;
-            border-radius: 3px;
-            padding: 1px 4px;
-            font-size: 0.5rem;
-            cursor: pointer;
-            margin-left: 2px;
-        }
-
-        .remove-time-btn {
-            background: #dc3545;
-            color: white;
-            border: none;
-            border-radius: 3px;
-            padding: 1px 4px;
-            font-size: 0.5rem;
-            cursor: pointer;
-            margin-left: 2px;
-        }
-
-        /* Very subtle alternating row colors */
-        .schedule-table tr:nth-child(even) td {
-            background-color: #fafafa;
-        }
-
-        .schedule-table tr:nth-child(odd) td {
-            background-color: white;
-        }
-
         .subject-cell {
             font-weight: 600;
             text-align: left !important;
             padding-left: 12px;
             font-size: 0.7rem;
-        }
-
-        /* Ensure subject cells follow the same alternating pattern */
-        .schedule-table tr:nth-child(even) .subject-cell {
-            background-color: #fafafa;
-        }
-
-        .schedule-table tr:nth-child(odd) .subject-cell {
-            background-color: white;
         }
 
         .time-slot {
@@ -589,68 +567,62 @@
                 
                 <div class="schedule-title">📅 External Study Schedule</div>
                 <table class="schedule-table">
-                    <thead>
-                        <tr>
-                            <th>Subject</th>
-                            <th>Mon</th>
-                            <th>Tue</th>
-                            <th>Wed</th>
-                            <th>Thu</th>
-                            <th>Fri</th>
-                            <th>Sat</th>
-                            <th>Sun</th>
-                        </tr>
-                    </thead>
+                        <thead>
+                            <tr>
+                                <th>Subject</th>
+                                <th>Sat</th>
+                                <th>Sun</th>
+                                <th>Mon</th>
+                                <th>Tue</th>
+                                <th>Wed</th>
+                                <th>Thu</th>
+                            </tr>
+                        </thead>
                     <tbody>
                         <tr>
                             <td class="subject-cell">🕌 Arabic</td>
+                            <td class="editable" data-subject="arabic" data-day="sat"><span class="time-slot">10:30</span></td>
+                            <td class="editable" data-subject="arabic" data-day="sun">-</td>
                             <td class="editable" data-subject="arabic" data-day="mon">-</td>
                             <td class="editable" data-subject="arabic" data-day="tue"><span class="time-slot">13:30</span></td>
                             <td class="editable" data-subject="arabic" data-day="wed">-</td>
                             <td class="editable" data-subject="arabic" data-day="thu"><span class="time-slot">13:30</span></td>
-                            <td class="editable" data-subject="arabic" data-day="fri">-</td>
-                            <td class="editable" data-subject="arabic" data-day="sat"><span class="time-slot">10:30</span></td>
-                            <td class="editable" data-subject="arabic" data-day="sun">-</td>
                         </tr>
                         <tr>
                             <td class="subject-cell">🇬🇧 English</td>
+                            <td class="editable" data-subject="english" data-day="sat"><span class="time-slot">9:00</span></td>
+                            <td class="editable" data-subject="english" data-day="sun">-</td>
                             <td class="editable" data-subject="english" data-day="mon">-</td>
                             <td class="editable" data-subject="english" data-day="tue"><span class="time-slot">9:00</span></td>
                             <td class="editable" data-subject="english" data-day="wed">-</td>
                             <td class="editable" data-subject="english" data-day="thu">-</td>
-                            <td class="editable" data-subject="english" data-day="fri">-</td>
-                            <td class="editable" data-subject="english" data-day="sat"><span class="time-slot">9:00</span></td>
-                            <td class="editable" data-subject="english" data-day="sun">-</td>
                         </tr>
                         <tr>
                             <td class="subject-cell">⚗️ Chemistry</td>
+                            <td class="editable" data-subject="chemistry" data-day="sat">-</td>
+                            <td class="editable" data-subject="chemistry" data-day="sun">-</td>
                             <td class="editable" data-subject="chemistry" data-day="mon">-</td>
                             <td class="editable" data-subject="chemistry" data-day="tue"><span class="time-slot">10:30</span></td>
                             <td class="editable" data-subject="chemistry" data-day="wed">-</td>
                             <td class="editable" data-subject="chemistry" data-day="thu"><span class="time-slot">10:30</span></td>
-                            <td class="editable" data-subject="chemistry" data-day="fri">-</td>
-                            <td class="editable" data-subject="chemistry" data-day="sat">-</td>
-                            <td class="editable" data-subject="chemistry" data-day="sun">-</td>
                         </tr>
                         <tr>
                             <td class="subject-cell">⚛️ Physics</td>
+                            <td class="editable" data-subject="physics" data-day="sat">-</td>
+                            <td class="editable" data-subject="physics" data-day="sun">-</td>
                             <td class="editable" data-subject="physics" data-day="mon"><span class="time-slot">8:00</span></td>
                             <td class="editable" data-subject="physics" data-day="tue">-</td>
                             <td class="editable" data-subject="physics" data-day="wed">-</td>
                             <td class="editable" data-subject="physics" data-day="thu"><span class="time-slot">8:00</span></td>
-                            <td class="editable" data-subject="physics" data-day="fri">-</td>
-                            <td class="editable" data-subject="physics" data-day="sat">-</td>
-                            <td class="editable" data-subject="physics" data-day="sun">-</td>
                         </tr>
                         <tr>
                             <td class="subject-cell">🧬 Biology</td>
+                            <td class="editable" data-subject="biology" data-day="sat">-</td>
+                            <td class="editable" data-subject="biology" data-day="sun"><span class="online-slot">Online Study</span></td>
                             <td class="editable" data-subject="biology" data-day="mon">-</td>
                             <td class="editable" data-subject="biology" data-day="tue">-</td>
                             <td class="editable" data-subject="biology" data-day="wed">-</td>
                             <td class="editable" data-subject="biology" data-day="thu">-</td>
-                            <td class="editable" data-subject="biology" data-day="fri">-</td>
-                            <td class="editable" data-subject="biology" data-day="sat">-</td>
-                            <td class="editable" data-subject="biology" data-day="sun"><span class="online-slot">Online Study</span></td>
                         </tr>
                     </tbody>
                 </table>
